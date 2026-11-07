@@ -288,7 +288,7 @@ export const api = {
         method: "DELETE",
       }),
     listBlocked: () =>
-      request<{ blockedUsers: Array<{ id: string; blockedUserId: string; reason?: string; createdAt: string }> }>(
+      request<{ blockedUsers: { id: string; blockedUserId: string; reason?: string; createdAt: string }[] }>(
         "/safety/blocked"
       ),
     createReport: (input: {

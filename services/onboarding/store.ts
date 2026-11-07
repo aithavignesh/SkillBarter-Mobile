@@ -1,4 +1,4 @@
-import { OnboardingInput, UserSkillItem } from "@/types";
+import { OnboardingInput } from "@/types";
 
 let draftOnboarding: OnboardingInput = {
   displayName: "",

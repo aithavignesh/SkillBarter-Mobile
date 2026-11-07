@@ -9,22 +9,21 @@ import {
   Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/services/api";
-import { ReportDto, PlatformStatsDto } from "@/types";
+import { ReportDto } from "@/types";
 import { Header } from "@/components/navigation/Header";
 import { Card } from "@/components/common/Card";
 import { Badge } from "@/components/common/Badge";
 import { Button } from "@/components/common/Button";
 import { SkeletonCard } from "@/components/common/Skeleton";
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
-import { colors, borderRadius, typography, spacing } from "@/constants/theme";
+import { colors, typography, spacing } from "@/constants/theme";
 
 export default function AdminScreen() {
   const router = useRouter();
   const { user } = useAuth();
-  const queryClient = useQueryClient();
 
   const [activeTab, setActiveTab] = useState<"stats" | "reports" | "users" | "audit">("stats");
 

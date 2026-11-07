@@ -37,7 +37,6 @@ export default function MyProfileScreen() {
   // Fetch My Skills
   const {
     data: skillsData,
-    isLoading: skillsLoading,
     refetch: refetchSkills,
     isRefetching,
   } = useQuery({

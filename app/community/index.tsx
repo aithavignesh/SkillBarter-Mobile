@@ -9,7 +9,7 @@ import {
   Modal,
   Alert,
 } from "react-native";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/services/api";
 import { CommunityPostDto, ConnectionDto } from "@/types";
@@ -21,12 +21,10 @@ import { Card } from "@/components/common/Card";
 import { Input } from "@/components/common/Input";
 import { SkeletonCard } from "@/components/common/Skeleton";
 import { EmptyState } from "@/components/feedback/EmptyState";
-import { ErrorAlert } from "@/components/feedback/ErrorAlert";
-import { colors, borderRadius, typography, spacing } from "@/constants/theme";
+import { colors, typography, spacing } from "@/constants/theme";
 
 export default function CommunityScreen() {
   const { user } = useAuth();
-  const queryClient = useQueryClient();
 
   const [activeTab, setActiveTab] = useState<"posts" | "connections">("posts");
 
