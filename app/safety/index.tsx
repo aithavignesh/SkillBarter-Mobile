@@ -6,7 +6,6 @@ import {
   ScrollView,
   Pressable,
   Alert,
-  Modal,
 } from "react-native";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/services/api";
@@ -14,7 +13,6 @@ import { Header } from "@/components/navigation/Header";
 import { Card } from "@/components/common/Card";
 import { Button } from "@/components/common/Button";
 import { Input } from "@/components/common/Input";
-import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import { colors, borderRadius, typography, spacing } from "@/constants/theme";
 
 export default function SafetyScreen() {
@@ -32,7 +30,6 @@ export default function SafetyScreen() {
   // Fetch Blocked Users
   const {
     data: blockedData,
-    isLoading: blockedLoading,
     refetch: refetchBlocked,
   } = useQuery({
     queryKey: ["safety", "blocked"],

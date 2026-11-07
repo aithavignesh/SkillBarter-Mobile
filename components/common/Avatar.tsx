@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, ViewStyle, ImageStyle, StyleProp } from "react-native";
-import { colors, borderRadius, typography } from "@/constants/theme";
+import { colors, typography } from "@/constants/theme";
 
 interface AvatarProps {
   name: string;

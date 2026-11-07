@@ -15,7 +15,7 @@ import { Header } from "@/components/navigation/Header";
 import { Card } from "@/components/common/Card";
 import { Button } from "@/components/common/Button";
 import { Input } from "@/components/common/Input";
-import { colors, borderRadius, typography, spacing } from "@/constants/theme";
+import { colors, typography, spacing } from "@/constants/theme";
 
 export default function SettingsScreen() {
   const router = useRouter();

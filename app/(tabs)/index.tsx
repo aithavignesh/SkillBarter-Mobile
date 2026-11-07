@@ -17,7 +17,7 @@ import { Button } from "@/components/common/Button";
 import { SkeletonCard } from "@/components/common/Skeleton";
 import { MatchCard } from "@/components/cards/MatchCard";
 import { ExchangeCard } from "@/components/cards/ExchangeCard";
-import { colors, borderRadius, typography, spacing } from "@/constants/theme";
+import { colors, typography, spacing } from "@/constants/theme";
 
 export default function DashboardScreen() {
   const router = useRouter();
@@ -32,7 +32,7 @@ export default function DashboardScreen() {
   });
 
   // Fetch User's Exchanges
-  const { data: exchangesData, isLoading: exchangesLoading } = useQuery({
+  const { data: exchangesData } = useQuery({
     queryKey: ["dashboard", "exchanges"],
     queryFn: () => api.exchanges.list(),
   });

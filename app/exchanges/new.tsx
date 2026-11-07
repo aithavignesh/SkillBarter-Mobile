@@ -45,8 +45,14 @@ export default function NewExchangeScreen() {
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const myOffered = (mySkillsData?.skills || []).filter((s) => s.type === "offered");
-  const theirOffered = recipientData?.profile?.offeredSkills || [];
+  const myOffered = React.useMemo(
+    () => (mySkillsData?.skills || []).filter((s) => s.type === "offered"),
+    [mySkillsData?.skills]
+  );
+  const theirOffered = React.useMemo(
+    () => recipientData?.profile?.offeredSkills || [],
+    [recipientData?.profile?.offeredSkills]
+  );
 
   // Auto-select if options exist
   React.useEffect(() => {

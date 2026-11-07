@@ -92,22 +92,22 @@ export interface PublicUserProfile {
   reputationScore: number;
   completedExchangesCount: number;
   createdAt: string;
-  offeredSkills: Array<{
+  offeredSkills: {
     id: string;
     skillId: string;
     name: string;
     category: string;
     proficiency: string;
     description?: string;
-  }>;
-  wantedSkills: Array<{
+  }[];
+  wantedSkills: {
     id: string;
     skillId: string;
     name: string;
     category: string;
     proficiency: string;
     description?: string;
-  }>;
+  }[];
 }
 
 export interface SkillDto {
@@ -145,8 +145,8 @@ export interface MatchResult {
   compatibilityScore: number;
   explanation: string;
   reciprocalMatch: boolean;
-  theyTeachYouLearn: Array<{ skillId: string; name: string; proficiency: string }>;
-  youTeachTheyLearn: Array<{ skillId: string; name: string; proficiency: string }>;
+  theyTeachYouLearn: { skillId: string; name: string; proficiency: string }[];
+  youTeachTheyLearn: { skillId: string; name: string; proficiency: string }[];
 }
 
 export interface ExchangeDto {
@@ -196,11 +196,11 @@ export interface MessageDto {
 
 export interface ConversationDto {
   id: string;
-  participants: Array<{
+  participants: {
     id: string;
     displayName: string;
     avatarUrl?: string;
-  }>;
+  }[];
   exchangeId?: string;
   lastMessage?: {
     content: string;

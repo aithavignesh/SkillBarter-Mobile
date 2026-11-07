@@ -30,7 +30,7 @@ export class ApiError extends Error {
 }
 
 let isRefreshing = false;
-let refreshSubscribers: Array<(newToken: string) => void> = [];
+let refreshSubscribers: ((newToken: string) => void)[] = [];
 
 function onRefreshed(newToken: string) {
   refreshSubscribers.forEach((cb) => cb(newToken));

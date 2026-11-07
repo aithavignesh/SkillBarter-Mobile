@@ -8,7 +8,7 @@ import {
   Alert,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/services/api";
 import { Avatar } from "@/components/common/Avatar";
@@ -25,7 +25,6 @@ export default function UserProfileScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { user: currentUser } = useAuth();
-  const queryClient = useQueryClient();
   const [actionLoading, setActionLoading] = useState(false);
 
   const isSelf = currentUser?.id === id;

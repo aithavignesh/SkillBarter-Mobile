@@ -17,7 +17,7 @@ import { Header } from "@/components/navigation/Header";
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import { colors, borderRadius, typography, spacing } from "@/constants/theme";
 
-const SESSION_FORMATS: Array<{ format: SessionFormat; title: string; desc: string; icon: string }> = [
+const SESSION_FORMATS: { format: SessionFormat; title: string; desc: string; icon: string }[] = [
   { format: "video", title: "Video Call", desc: "Interactive remote sessions over Zoom or Google Meet", icon: "📹" },
   { format: "chat", title: "Chat / Messaging", desc: "Asynchronous or direct text-based mentoring", icon: "💬" },
   { format: "in_person", title: "In Person", desc: "Meet locally at cafes, libraries, or co-working spaces", icon: "☕" },
