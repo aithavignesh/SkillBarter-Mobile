@@ -27,9 +27,11 @@
         "backgroundColor": "#0F172A"
       },
       "package": "com.skillbarter.mobile",
+      "versionCode": 1,
       "permissions": [
         "android.permission.INTERNET",
-        "android.permission.READ_EXTERNAL_STORAGE"
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.CAMERA"
       ]
     },
     "web": {
@@ -45,9 +47,7 @@
       "typedRoutes": true
     },
     "extra": {
-      "eas": {
-        "projectId": "placeholder-skillbarter-project-id"
-      }
+      "eas": {}
     }
   }
 }

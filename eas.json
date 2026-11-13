@@ -12,19 +12,22 @@
     },
     "preview": {
       "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://staging-api.skillbarter.local/api/v1"
+        "EXPO_PUBLIC_API_URL": "https://api.skillbarter.com/api/v1"
       }
     },
     "production": {
-      "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.skillbarter.local/api/v1"
-      },
       "android": {
         "buildType": "app-bundle"
       },
       "ios": {
         "simulator": false
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://api.skillbarter.com/api/v1"
       }
     }
   },
