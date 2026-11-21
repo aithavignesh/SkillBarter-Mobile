@@ -18,23 +18,28 @@ export default function AuthOptionsScreen() {
         <Text style={styles.title}>Your next skill{ "\n" }starts here.</Text>
         <Text style={styles.subtitle}>Create an account to exchange knowledge, or sign in to continue your journey.</Text>
 
-        <View style={styles.illustration}>
+        <View style={styles.illustration} accessible accessibilityLabel="SkillBarter community and account security illustration">
           <View style={styles.orb} />
           <View style={styles.floatingCard}><UserRoundPlus color="#9CC5FF" size={22} /><Text style={styles.floatText}>Meet your community</Text></View>
           <View style={[styles.floatingCard, styles.floatRight]}><ShieldCheck color="#B9A5FF" size={22} /><Text style={styles.floatText}>Learn securely</Text></View>
         </View>
 
         <View style={styles.actions}>
-          <Pressable style={styles.primary} onPress={() => router.push("/(auth)/signup")} accessibilityRole="button">
+          <Pressable style={styles.primary} onPress={() => router.push("/(auth)/signup")} accessibilityRole="button" accessibilityLabel="Create a SkillBarter account">
             <UserRoundPlus color="#061226" size={19} />
             <Text style={styles.primaryText}>Create an account</Text>
             <ArrowRight color="#061226" size={18} />
           </Pressable>
-          <Pressable style={styles.secondary} onPress={() => router.push("/(auth)/login")} accessibilityRole="button">
+          <Pressable style={styles.secondary} onPress={() => router.push("/(auth)/login")} accessibilityRole="button" accessibilityLabel="Continue with email">
             <Mail color="#A9C9F8" size={19} />
             <Text style={styles.secondaryText}>Continue with email</Text>
           </Pressable>
-          <Text style={styles.footer}>Already have an account? <Text onPress={() => router.push("/(auth)/login")} style={styles.link}>Sign in</Text></Text>
+          <View style={styles.footerRow}>
+            <Text style={styles.footer}>Already have an account?</Text>
+            <Pressable onPress={() => router.push("/(auth)/login")} accessibilityRole="link" accessibilityLabel="Sign in">
+              <Text style={styles.link}>Sign in</Text>
+            </Pressable>
+          </View>
         </View>
       </View>
     </SafeAreaView>
@@ -60,6 +65,7 @@ const styles = StyleSheet.create({
   primaryText: { flex: 1, color: "#061226", fontSize: 14, fontWeight: "900", marginLeft: 10 },
   secondary: { minHeight: 56, borderRadius: 15, borderWidth: 1, borderColor: "#314968", backgroundColor: "#0C1728", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10 },
   secondaryText: { color: "#E5EEFC", fontSize: 14, fontWeight: "800" },
-  footer: { color: "#8293AB", textAlign: "center", fontSize: 12, marginTop: 6 },
-  link: { color: "#79AEFF", fontWeight: "800" },
+  footerRow: { flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 6, marginTop: 6 },
+  footer: { color: "#8293AB", textAlign: "center", fontSize: 12 },
+  link: { color: "#79AEFF", fontWeight: "800", fontSize: 12 },
 });
