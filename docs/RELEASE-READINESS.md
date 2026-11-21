@@ -1,6 +1,6 @@
 # SkillBarter Mobile — Release Readiness
 
-This document reflects the tracked configuration on the `ui/bhuvan` branch plus the staging-preview configuration proposed in the current pull request. A successful JavaScript bundle export does not prove that a signed installable app, live backend, or store submission is ready.
+This document reflects the tracked mobile app configuration and the verified staging-preview target. A successful JavaScript bundle export does not prove that a signed installable app, live backend, or store submission is ready.
 
 ## 1. App identity (verified from `app.json`)
 
