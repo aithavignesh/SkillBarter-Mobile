@@ -1,42 +1,41 @@
 export const colors = {
-  primary: "#6366F1", // Indigo 500
-  primaryDark: "#4F46E5", // Indigo 600
-  primaryLight: "#EEF2FF", // Indigo 50
-  secondary: "#10B981", // Emerald 500
-  secondaryLight: "#ECFDF5",
-  accent: "#F59E0B", // Amber 500
-  danger: "#EF4444", // Red 500
-  dangerLight: "#FEF2F2",
-  warning: "#F59E0B",
-  info: "#3B82F6",
-  
-  // Neutral colors
-  background: "#0F172A", // Dark Slate 900
-  backgroundLight: "#F8FAFC", // Light Slate 50
-  cardDark: "#1E293B", // Dark Slate 800
+  primary: "#3B8BFF",
+  primaryDark: "#1769E8",
+  primaryLight: "#102D55",
+  secondary: "#34D399",
+  secondaryLight: "#0E302B",
+  accent: "#A78BFA",
+  danger: "#FB7185",
+  dangerLight: "#3A1825",
+  warning: "#FBBF24",
+  info: "#60A5FA",
+
+  background: "#050A14",
+  backgroundLight: "#F8FAFC",
+  cardDark: "#101D30",
   cardLight: "#FFFFFF",
-  cardHoverDark: "#334155",
+  cardHoverDark: "#172941",
   cardHoverLight: "#F1F5F9",
-  
-  textPrimary: "#F8FAFC",
-  textSecondary: "#94A3B8",
-  textMuted: "#64748B",
+
+  textPrimary: "#F5F8FF",
+  textSecondary: "#A7B5CA",
+  textMuted: "#71839D",
   textDarkPrimary: "#0F172A",
   textDarkSecondary: "#475569",
   textDarkMuted: "#94A3B8",
 
-  borderDark: "#334155",
+  borderDark: "#263B58",
   borderLight: "#E2E8F0",
-  
+
   status: {
-    pending: "#F59E0B",
-    accepted: "#3B82F6",
-    scheduled: "#8B5CF6",
-    in_progress: "#6366F1",
-    completed: "#10B981",
-    cancelled: "#64748B",
-    disputed: "#EF4444",
-  }
+    pending: "#FBBF24",
+    accepted: "#60A5FA",
+    scheduled: "#A78BFA",
+    in_progress: "#3B8BFF",
+    completed: "#34D399",
+    cancelled: "#71839D",
+    disputed: "#FB7185",
+  },
 };
 
 export const spacing = {
