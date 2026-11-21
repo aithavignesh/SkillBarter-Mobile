@@ -53,13 +53,7 @@ SkillBarter-Mobile/
 │   ├── safety/                 # Blocked users & moderation reporting
 │   └── admin/                  # Role-protected administrator dashboard
 ├── components/                 # Reusable design system components
-│   ├── common/                 # Button, Input, Card, Badge, Avatar, Skeleton
-│   ├── feedback/               # EmptyState, ErrorAlert, LoadingSpinner
-│   ├── navigation/             # Header, BackButton, TabIcon
-│   └── cards/                  # MatchCard, ExchangeCard, SessionCard, ReviewCard
 ├── services/                   # Network & API layer
-│   ├── api/                    # Centralized typed HTTP client with Bearer & 401 refresh
-│   └── auth/                   # SecureStore token storage
 ├── context/                    # AuthContext provider
 ├── constants/                  # Color palette, spacing, typography
 ├── utils/                      # Validators and formatting helpers
@@ -74,7 +68,7 @@ SkillBarter-Mobile/
 - **Node.js:** `>= 20.11.0` (Node 22 recommended)
 - **npm:** `>= 10.2.0`
 - **Expo CLI / EAS CLI:** Installed automatically or globally (`npm install -g eas-cli`)
-- **Backend API:** The existing SkillBarter-Next Express.js API running on `http://localhost:4000`
+- **Backend API:** SkillBarter-Next Express.js API. Preview builds use the staging API; production builds use the production API.
 
 ---
 
@@ -90,8 +84,7 @@ npm install
 
 Copy `.env.example` to `.env`:
 
-```bash
-# Windows PowerShell
+```powershell
 Copy-Item .env.example .env
 ```
 
@@ -99,6 +92,8 @@ Set the backend API URL:
 - **Android Emulator:** `EXPO_PUBLIC_API_URL=http://10.0.2.2:4000/api/v1`
 - **iOS Simulator / Local:** `EXPO_PUBLIC_API_URL=http://localhost:4000/api/v1`
 - **Physical Device:** `EXPO_PUBLIC_API_URL=http://<YOUR-COMPUTER-LAN-IP>:4000/api/v1`
+- **Staging preview build:** `https://skillbarter-next-api-staging.onrender.com/api/v1`
+- **Production build:** `https://api.skillbarter.com/api/v1`
 
 ### 3. Run Development Server
 
@@ -117,38 +112,44 @@ Press:
 ## Verification & Testing
 
 ### Run TypeScript Verification
+
 ```bash
 npm run typecheck
 ```
 
 ### Run Automated Tests
+
 ```bash
 npm test
 ```
-Executes all 27 automated test suites:
-- Form validation schemas
-- Token storage & security wipes
-- API client headers & token refresh loop
-- Complete 18-step Two-User End-to-End Acceptance Journey & boundary invariant checks
+
+Executes the automated suites covering form validation, token storage, API client headers and refresh, and two-user acceptance journey invariants.
 
 ---
 
-## Building for Production
+## Building
 
-Configure your Expo Application Services (EAS) credentials and run:
+After EAS project linking and Expo authentication are configured:
 
-### Android Production Build (AAB)
+### Android staging preview (APK)
+
+```bash
+eas build --platform android --profile preview
+```
+
+### Android production (AAB)
+
 ```bash
 eas build --platform android --profile production
 ```
 
-### iOS Production Build (IPA)
+### iOS production (IPA)
+
 ```bash
 eas build --platform ios --profile production
 ```
 
-For detailed release requirements and store submission guidance, see:
-[`docs/RELEASE-READINESS.md`](docs/RELEASE-READINESS.md).
+For detailed release requirements and store submission guidance, see [Release Readiness & Store Guide](docs/RELEASE-READINESS.md).
 
 ---
 
@@ -158,4 +159,4 @@ For detailed release requirements and store submission guidance, see:
 - [Mobile API Integration Reference](docs/MOBILE-API-INTEGRATION.md)
 - [Architecture Specification](docs/ARCHITECTURE.md)
 - [Automated Testing Report](docs/TESTING-REPORT.md)
-- [Release Readiness & Store Guide](file:///c:/Users/vigne/OneDrive/Desktop/SkillBarter-Mobile/docs/RELEASE-READINESS.md)
+- [Release Readiness & Store Guide](docs/RELEASE-READINESS.md)
