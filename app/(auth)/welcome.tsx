@@ -1,9 +1,8 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView, useWindowDimensions } from "react-native";
+import { View, Text, StyleSheet, ScrollView, useWindowDimensions, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ArrowRight, BookOpen, Code2, Palette, Sparkles } from "lucide-react-native";
-import { colors, spacing, typography } from "@/constants/theme";
 
 export default function WelcomeScreen() {
   const router = useRouter();
@@ -26,7 +25,7 @@ export default function WelcomeScreen() {
           <Text style={[styles.title, compact && styles.titleCompact]}>Trade skills.{ "\n" }Grow together.</Text>
           <Text style={styles.subtitle}>Share what you know. Learn what you love. Build meaningful connections without money getting in the way.</Text>
 
-          <View style={styles.artboard} accessibilityLabel="Illustration of people exchanging skills">
+          <View style={styles.artboard} accessible accessibilityLabel="Illustration of two people exchanging development and design skills">
             <View style={styles.artHalo} />
             <View style={styles.orbit} />
             <View style={[styles.skillCard, styles.cardTop]}>
@@ -48,10 +47,10 @@ export default function WelcomeScreen() {
         <View style={styles.footer}>
           <View style={styles.pagination}><View style={styles.activeDot} /><View style={styles.dot} /><View style={styles.dot} /></View>
           <Text style={styles.footerHint}>A community built on sharing knowledge</Text>
-          <View style={styles.cta}>
-            <Text onPress={() => router.push("/(auth)/auth-options")} style={styles.ctaText} accessibilityRole="button">Get Started</Text>
+          <Pressable onPress={() => router.push("/(auth)/auth-options")} style={styles.cta} accessibilityRole="button" accessibilityLabel="Get started with SkillBarter">
+            <Text style={styles.ctaText}>Get Started</Text>
             <ArrowRight color="#061226" size={20} />
-          </View>
+          </Pressable>
           <Text style={styles.legal}>By continuing, you agree to our Terms of Service and Privacy Policy.</Text>
         </View>
       </ScrollView>
