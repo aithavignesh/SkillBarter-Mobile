@@ -24,7 +24,7 @@ The application is built with **React Native**, **Expo SDK 52**, **Expo Router v
 
 ## Architecture & Technology Stack
 
-- **Framework:** React Native 0.76.7 (New Architecture enabled)
+- **Framework:** React Native 0.76.9 (New Architecture enabled)
 - **App Platform:** Expo SDK 52
 - **Routing:** Expo Router v4 (File-based navigation)
 - **State Management:** TanStack React Query v5 (Server state) & React Context (Auth state)
@@ -148,14 +148,14 @@ eas build --platform ios --profile production
 ```
 
 For detailed release requirements and store submission guidance, see:
-[`docs/RELEASE-READINESS.md`](file:///c:/Users/vigne/OneDrive/Desktop/SkillBarter-Mobile/docs/RELEASE-READINESS.md).
+[`docs/RELEASE-READINESS.md`](docs/RELEASE-READINESS.md).
 
 ---
 
 ## Documentation Index
 
-- [Mobile Migration Analysis](file:///c:/Users/vigne/OneDrive/Desktop/SkillBarter-Mobile/docs/MOBILE-MIGRATION-ANALYSIS.md)
-- [Mobile API Integration Reference](file:///c:/Users/vigne/OneDrive/Desktop/SkillBarter-Mobile/docs/MOBILE-API-INTEGRATION.md)
-- [Architecture Specification](file:///c:/Users/vigne/OneDrive/Desktop/SkillBarter-Mobile/docs/ARCHITECTURE.md)
-- [Automated Testing Report](file:///c:/Users/vigne/OneDrive/Desktop/SkillBarter-Mobile/docs/TESTING-REPORT.md)
+- [Mobile Migration Analysis](docs/MOBILE-MIGRATION-ANALYSIS.md)
+- [Mobile API Integration Reference](docs/MOBILE-API-INTEGRATION.md)
+- [Architecture Specification](docs/ARCHITECTURE.md)
+- [Automated Testing Report](docs/TESTING-REPORT.md)
 - [Release Readiness & Store Guide](file:///c:/Users/vigne/OneDrive/Desktop/SkillBarter-Mobile/docs/RELEASE-READINESS.md)
