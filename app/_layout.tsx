@@ -11,7 +11,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 2,
-      staleTime: 1000 * 30, // 30 seconds
+      staleTime: 1000 * 30,
     },
   },
 });
@@ -28,26 +28,17 @@ function NavigationGuard() {
     const inOnboardingGroup = segments[0] === "(onboarding)";
 
     if (status === "unauthenticated") {
-      if (!inAuthGroup) {
-        router.replace("/(auth)/login");
-      }
+      if (!inAuthGroup) router.replace("/(auth)/welcome");
     } else if (status === "authenticated" && user) {
       if (!user.onboardingCompleted) {
-        if (!inOnboardingGroup) {
-          router.replace("/(onboarding)");
-        }
-      } else {
-        // Authenticated & Onboarded
-        if (inAuthGroup || inOnboardingGroup) {
-          router.replace("/(tabs)");
-        }
+        if (!inOnboardingGroup) router.replace("/(onboarding)");
+      } else if (inAuthGroup || inOnboardingGroup) {
+        router.replace("/(tabs)");
       }
     }
   }, [user, status, isLoading, segments, router]);
 
-  if (isLoading) {
-    return <LoadingSpinner message="Starting SkillBarter..." />;
-  }
+  if (isLoading) return <LoadingSpinner message="Starting SkillBarter..." />;
 
   return (
     <Stack
