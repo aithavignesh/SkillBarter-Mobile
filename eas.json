@@ -16,7 +16,7 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.skillbarter.com/api/v1"
+        "EXPO_PUBLIC_API_URL": "https://skillbarter-next-api-staging.onrender.com/api/v1"
       }
     },
     "production": {
