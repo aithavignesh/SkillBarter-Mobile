@@ -5,12 +5,15 @@ on:
     branches:
       - development
       - ui/bhuvan
+  push:
+    branches:
+      - feature/mobile-onboarding-reference
 
 permissions:
   contents: read
 
 concurrency:
-  group: mobile-ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: mobile-ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
