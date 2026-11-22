@@ -9,7 +9,7 @@ export const passwordSchema = z
   .regex(/[0-9]/, "Password must contain at least one number");
 
 export const registerSchema = z.object({
-  email: z.string().email("Invalid email address").toLowerCase().trim(),
+  email: z.string().trim().toLowerCase().email("Invalid email address"),
   password: passwordSchema,
   displayName: z.string().min(2, "Name must be at least 2 characters").max(50).trim(),
 });
@@ -17,14 +17,14 @@ export const registerSchema = z.object({
 export type RegisterFormData = z.infer<typeof registerSchema>;
 
 export const loginSchema = z.object({
-  email: z.string().email("Invalid email address").toLowerCase().trim(),
+  email: z.string().trim().toLowerCase().email("Invalid email address"),
   password: z.string().min(1, "Password is required"),
 });
 
 export type LoginFormData = z.infer<typeof loginSchema>;
 
 export const forgotPasswordSchema = z.object({
-  email: z.string().email("Invalid email address").toLowerCase().trim(),
+  email: z.string().trim().toLowerCase().email("Invalid email address"),
 });
 
 export const resetPasswordSchema = z.object({

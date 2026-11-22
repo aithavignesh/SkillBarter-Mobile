@@ -38,8 +38,12 @@ export default function LoginScreen() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       setErrorMsg(null);
-      await login(data.email, data.password);
-      // Navigation is handled automatically by NavigationGuard in _layout.tsx
+      const authUser = await login(data.email, data.password);
+      if (authUser.onboardingCompleted) {
+        router.replace("/(tabs)");
+      } else {
+        router.replace("/(onboarding)");
+      }
     } catch (err: any) {
       setErrorMsg(err.message || "Failed to sign in. Please verify your credentials.");
     }
@@ -112,6 +116,7 @@ export default function LoginScreen() {
             title="Sign In"
             onPress={handleSubmit(onSubmit)}
             loading={isSubmitting}
+            disabled={isSubmitting}
             size="lg"
             style={styles.submitBtn}
           />

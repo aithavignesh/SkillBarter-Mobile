@@ -22,12 +22,12 @@ import {
 export const api = {
   auth: {
     register: (input: { email: string; password: string; displayName: string }) =>
-      request<{ user: AuthUser; accessToken: string; verificationToken?: string }>(
+      request<{ user: AuthUser; accessToken: string; refreshToken?: string; verificationToken?: string }>(
         "/auth/register",
         { method: "POST", body: JSON.stringify(input) }
       ),
     login: (input: { email: string; password: string }) =>
-      request<{ user: AuthUser; accessToken: string }>("/auth/login", {
+      request<{ user: AuthUser; accessToken: string; refreshToken?: string }>("/auth/login", {
         method: "POST",
         body: JSON.stringify(input),
       }),
@@ -53,10 +53,10 @@ export const api = {
         method: "POST",
         body: JSON.stringify({ currentPassword, newPassword }),
       }),
-    refreshToken: (refreshToken: string) =>
-      request<{ accessToken: string }>("/auth/refresh", {
+    refreshToken: (refreshToken?: string) =>
+      request<{ accessToken: string; refreshToken?: string }>("/auth/refresh", {
         method: "POST",
-        body: JSON.stringify({ refreshToken }),
+        body: JSON.stringify(refreshToken ? { refreshToken } : {}),
       }),
   },
 

@@ -28,37 +28,54 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [status, setStatus] = useState<AuthStatus>("loading");
+  const [isRestoring, setIsRestoring] = useState(true);
 
   const restoreSession = useCallback(async () => {
     try {
       const token = await tokenStorage.getAccessToken();
       if (!token) {
         setStatus("unauthenticated");
+        setIsRestoring(false);
         return;
       }
 
       // Try fetching current user profile
-      const res = await api.auth.me();
-      if (res && res.user) {
-        setUser(res.user);
-        await tokenStorage.setUser(res.user);
-        setStatus("authenticated");
-      } else {
-        await tokenStorage.clearAll();
-        setUser(null);
-        setStatus("unauthenticated");
+      try {
+        const res = await api.auth.me();
+        if (res && res.user) {
+          setUser(res.user);
+          await tokenStorage.setUser(res.user);
+          setStatus("authenticated");
+        } else {
+          await tokenStorage.clearAll();
+          setUser(null);
+          setStatus("unauthenticated");
+        }
+      } catch (err: any) {
+        // In case network is offline, check cached user
+        if (err?.code === "NETWORK_ERROR" || err?.status === 0) {
+          const cached = await tokenStorage.getUser();
+          if (cached) {
+            setUser(cached);
+            setStatus("authenticated");
+          } else {
+            await tokenStorage.clearAll();
+            setUser(null);
+            setStatus("unauthenticated");
+          }
+        } else {
+          // Token is invalid/revoked and refresh failed
+          await tokenStorage.clearAll();
+          setUser(null);
+          setStatus("unauthenticated");
+        }
       }
     } catch {
-      // In case network is offline, check cached user
-      const cached = await tokenStorage.getUser();
-      if (cached) {
-        setUser(cached);
-        setStatus("authenticated");
-      } else {
-        await tokenStorage.clearAll();
-        setUser(null);
-        setStatus("unauthenticated");
-      }
+      await tokenStorage.clearAll();
+      setUser(null);
+      setStatus("unauthenticated");
+    } finally {
+      setIsRestoring(false);
     }
   }, []);
 
@@ -67,15 +84,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [restoreSession]);
 
   const login = async (email: string, password: string): Promise<AuthUser> => {
-    setStatus("loading");
     try {
-      const res = await api.auth.login({ email, password });
+      const normalizedEmail = email.trim().toLowerCase();
+      const res = await api.auth.login({ email: normalizedEmail, password });
       await tokenStorage.setAccessToken(res.accessToken);
+      if (res.refreshToken) {
+        await tokenStorage.setRefreshToken(res.refreshToken);
+      }
       await tokenStorage.setUser(res.user);
       setUser(res.user);
       setStatus("authenticated");
       return res.user;
     } catch (err) {
+      // Do not transition to "loading" which unmounts the form screen.
+      // Ensure status remains unauthenticated and propagate the error to form UI.
       setStatus("unauthenticated");
       throw err;
     }
@@ -86,10 +108,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     password: string,
     displayName: string
   ): Promise<{ user: AuthUser; verificationToken?: string }> => {
-    setStatus("loading");
     try {
-      const res = await api.auth.register({ email, password, displayName });
+      const normalizedEmail = email.trim().toLowerCase();
+      const res = await api.auth.register({
+        email: normalizedEmail,
+        password,
+        displayName: displayName.trim(),
+      });
       await tokenStorage.setAccessToken(res.accessToken);
+      if (res.refreshToken) {
+        await tokenStorage.setRefreshToken(res.refreshToken);
+      }
       await tokenStorage.setUser(res.user);
       setUser(res.user);
       setStatus("authenticated");
@@ -130,7 +159,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       value={{
         user,
         status,
-        isLoading: status === "loading",
+        isLoading: isRestoring,
         isAuthenticated: status === "authenticated" && !!user,
         isOnboarded,
         isVerified,
