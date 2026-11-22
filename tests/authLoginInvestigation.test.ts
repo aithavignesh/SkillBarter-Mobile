@@ -263,6 +263,140 @@ describe("Comprehensive Mobile Login & Authentication Verification Suite", () =>
       expect(await tokenStorage.getAccessToken()).toBeNull();
       expect(await tokenStorage.getRefreshToken()).toBeNull();
     });
+
+    it("supports sequential refresh-token rotation across multiple refresh cycles without reusing stale tokens", async () => {
+      // Step 0: User logs in, acquiring initial access token v1 and refresh token v1
+      await tokenStorage.setAccessToken("access-token-v1");
+      await tokenStorage.setRefreshToken("refresh-token-v1");
+
+      const sentRefreshTokens: string[] = [];
+      let callCount = 0;
+
+      global.fetch = vi.fn().mockImplementation(async (url: string, opts: any) => {
+        if (url.includes("/auth/refresh")) {
+          const body = JSON.parse(opts.body || "{}");
+          sentRefreshTokens.push(body.refreshToken);
+
+          // Backend enforces single-use refresh token rotation
+          if (body.refreshToken === "refresh-token-v1") {
+            return {
+              ok: true,
+              status: 200,
+              json: async () => ({
+                success: true,
+                data: {
+                  accessToken: "access-token-v2",
+                  refreshToken: "refresh-token-v2",
+                },
+              }),
+            };
+          }
+
+          if (body.refreshToken === "refresh-token-v2") {
+            return {
+              ok: true,
+              status: 200,
+              json: async () => ({
+                success: true,
+                data: {
+                  accessToken: "access-token-v3",
+                  refreshToken: "refresh-token-v3",
+                },
+              }),
+            };
+          }
+
+          // If a rotated/stale token is reused, backend rejects with 401
+          return {
+            ok: false,
+            status: 401,
+            json: async () => ({
+              success: false,
+              error: { code: "INVALID_TOKEN", message: "Refresh token already used / invalid" },
+            }),
+          };
+        }
+
+        callCount++;
+        if (callCount === 1) {
+          // First attempt of request A fails with 401 (access token v1 expired)
+          return {
+            ok: false,
+            status: 401,
+            json: async () => ({
+              success: false,
+              error: { code: "EXPIRED_TOKEN", message: "Token expired" },
+            }),
+          };
+        }
+        if (callCount === 2) {
+          // Retry of request A succeeds with access token v2
+          return {
+            ok: true,
+            status: 200,
+            json: async () => ({ success: true, data: { step: 1 } }),
+          };
+        }
+        if (callCount === 3) {
+          // Much later, request B fails with 401 (access token v2 expired)
+          return {
+            ok: false,
+            status: 401,
+            json: async () => ({
+              success: false,
+              error: { code: "EXPIRED_TOKEN", message: "Token expired again" },
+            }),
+          };
+        }
+        // Retry of request B succeeds with access token v3
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({ success: true, data: { step: 2 } }),
+        };
+      });
+
+      // Cycle 1: First request triggers refresh from v1 -> v2
+      const res1 = await request<{ step: number }>("/protected-data-1");
+      expect(res1.step).toBe(1);
+      expect(sentRefreshTokens).toEqual(["refresh-token-v1"]);
+      expect(await tokenStorage.getAccessToken()).toBe("access-token-v2");
+      expect(await tokenStorage.getRefreshToken()).toBe("refresh-token-v2");
+
+      // Cycle 2: Second request triggers second refresh from v2 -> v3
+      const res2 = await request<{ step: number }>("/protected-data-2");
+      expect(res2.step).toBe(2);
+      expect(sentRefreshTokens).toEqual(["refresh-token-v1", "refresh-token-v2"]);
+      expect(await tokenStorage.getAccessToken()).toBe("access-token-v3");
+      expect(await tokenStorage.getRefreshToken()).toBe("refresh-token-v3");
+    });
+
+    it("persists rotated tokens through direct api.auth.refreshToken call", async () => {
+      await tokenStorage.setRefreshToken("existing-refresh-token");
+
+      global.fetch = vi.fn().mockImplementation(async (url: string) => {
+        if (url.includes("/auth/refresh")) {
+          return {
+            ok: true,
+            status: 200,
+            json: async () => ({
+              success: true,
+              data: {
+                accessToken: "new-access-token-direct",
+                refreshToken: "new-refresh-token-direct",
+              },
+            }),
+          };
+        }
+        return { ok: false, status: 404, json: async () => ({}) };
+      });
+
+      const res = await api.auth.refreshToken();
+      expect(res.accessToken).toBe("new-access-token-direct");
+      expect(res.refreshToken).toBe("new-refresh-token-direct");
+      expect(await tokenStorage.getAccessToken()).toBe("new-access-token-direct");
+      expect(await tokenStorage.getRefreshToken()).toBe("new-refresh-token-direct");
+    });
   });
 
   // 4. Token Storage & Android Large Payload Resilience

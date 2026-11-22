@@ -1,4 +1,5 @@
 import { request } from "./client";
+import { tokenStorage } from "../auth/tokenStorage";
 import {
   AuthUser,
   PublicUserProfile,
@@ -53,11 +54,20 @@ export const api = {
         method: "POST",
         body: JSON.stringify({ currentPassword, newPassword }),
       }),
-    refreshToken: (refreshToken?: string) =>
-      request<{ accessToken: string; refreshToken?: string }>("/auth/refresh", {
+    refreshToken: async (refreshToken?: string) => {
+      const token = refreshToken || (await tokenStorage.getRefreshToken());
+      const res = await request<{ accessToken: string; refreshToken?: string }>("/auth/refresh", {
         method: "POST",
-        body: JSON.stringify(refreshToken ? { refreshToken } : {}),
-      }),
+        body: JSON.stringify(token ? { refreshToken: token } : {}),
+      });
+      if (res.accessToken) {
+        await tokenStorage.setAccessToken(res.accessToken);
+      }
+      if (res.refreshToken) {
+        await tokenStorage.setRefreshToken(res.refreshToken);
+      }
+      return res;
+    },
   },
 
   users: {

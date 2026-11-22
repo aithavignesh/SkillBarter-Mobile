@@ -83,30 +83,36 @@ export async function request<T>(
     if (!isRefreshing) {
       isRefreshing = true;
       const refreshToken = await tokenStorage.getRefreshToken();
-      try {
-        const refreshRes = await fetch(`${API_BASE_URL}/auth/refresh`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(refreshToken ? { refreshToken } : {}),
-        });
-        const refreshData: ApiResponse<{ accessToken: string; refreshToken?: string }> =
-          await refreshRes.json();
-        if (refreshRes.ok && refreshData.success && refreshData.data?.accessToken) {
-          const newAccessToken = refreshData.data.accessToken;
-          await tokenStorage.setAccessToken(newAccessToken);
-          if (refreshData.data.refreshToken) {
-            await tokenStorage.setRefreshToken(refreshData.data.refreshToken);
+      if (!refreshToken) {
+        isRefreshing = false;
+        await tokenStorage.clearAll();
+        refreshSubscribers = [];
+      } else {
+        try {
+          const refreshRes = await fetch(`${API_BASE_URL}/auth/refresh`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ refreshToken }),
+          });
+          const refreshData: ApiResponse<{ accessToken: string; refreshToken?: string }> =
+            await refreshRes.json();
+          if (refreshRes.ok && refreshData.success && refreshData.data?.accessToken) {
+            const newAccessToken = refreshData.data.accessToken;
+            await tokenStorage.setAccessToken(newAccessToken);
+            if (refreshData.data.refreshToken) {
+              await tokenStorage.setRefreshToken(refreshData.data.refreshToken);
+            }
+            isRefreshing = false;
+            onRefreshed(newAccessToken);
+            return request<T>(endpoint, options, true);
           }
-          isRefreshing = false;
-          onRefreshed(newAccessToken);
-          return request<T>(endpoint, options, true);
+        } catch {
+          // Refresh failed
         }
-      } catch {
-        // Refresh failed
+        isRefreshing = false;
+        await tokenStorage.clearAll();
+        refreshSubscribers = [];
       }
-      isRefreshing = false;
-      await tokenStorage.clearAll();
-      refreshSubscribers = [];
     } else {
       // Wait for existing refresh to complete
       return new Promise<T>((resolve, reject) => {
