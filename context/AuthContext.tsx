@@ -16,7 +16,8 @@ interface AuthContextType {
   register: (
     email: string,
     password: string,
-    displayName: string
+    displayName: string,
+    phone: string
   ) => Promise<{ user: AuthUser; verificationToken?: string }>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<AuthUser | null>;
@@ -28,6 +29,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [status, setStatus] = useState<AuthStatus>("loading");
+  const [isRestoring, setIsRestoring] = useState(true);
 
   const restoreSession = useCallback(async () => {
     try {
@@ -59,6 +61,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(null);
         setStatus("unauthenticated");
       }
+    } finally {
+      setIsRestoring(false);
     }
   }, []);
 
@@ -67,10 +71,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [restoreSession]);
 
   const login = async (email: string, password: string): Promise<AuthUser> => {
-    setStatus("loading");
     try {
       const res = await api.auth.login({ email, password });
       await tokenStorage.setAccessToken(res.accessToken);
+      if (res.refreshToken) await tokenStorage.setRefreshToken(res.refreshToken);
       await tokenStorage.setUser(res.user);
       setUser(res.user);
       setStatus("authenticated");
@@ -84,11 +88,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const register = async (
     email: string,
     password: string,
-    displayName: string
+    displayName: string,
+    phone: string
   ): Promise<{ user: AuthUser; verificationToken?: string }> => {
-    setStatus("loading");
     try {
-      const res = await api.auth.register({ email, password, displayName });
+      const res = await api.auth.register({ email, phone, password, displayName });
       await tokenStorage.setAccessToken(res.accessToken);
       await tokenStorage.setUser(res.user);
       setUser(res.user);
@@ -130,7 +134,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       value={{
         user,
         status,
-        isLoading: status === "loading",
+        isLoading: isRestoring,
         isAuthenticated: status === "authenticated" && !!user,
         isOnboarded,
         isVerified,
