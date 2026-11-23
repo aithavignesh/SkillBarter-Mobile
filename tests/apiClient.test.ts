@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { request, ApiError } from "../services/api/client";
 import { tokenStorage } from "../services/auth/tokenStorage";
+import { api } from "../services/api";
 
 describe("Mobile Centralized API Client", () => {
   const originalFetch = global.fetch;
@@ -33,6 +34,35 @@ describe("Mobile Centralized API Client", () => {
     const res = await request<{ result: string }>("/test-endpoint");
     expect(res.result).toBe("ok");
     expect(capturedHeaders?.get("Authorization")).toBe("Bearer my-valid-bearer-token");
+  });
+
+  it("sends the required phone number in the registration request", async () => {
+    let capturedBody: Record<string, unknown> | undefined;
+    global.fetch = vi.fn().mockImplementation(async (_url: string, options: RequestInit) => {
+      capturedBody = JSON.parse(String(options.body)) as Record<string, unknown>;
+      return {
+        ok: true,
+        status: 201,
+        json: async () => ({
+          success: true,
+          data: {
+            user: { id: "user-1" },
+            accessToken: "access-token",
+            refreshToken: "refresh-token",
+          },
+        }),
+      } as any;
+    });
+
+    const result = await api.auth.register({
+      email: "alex@example.com",
+      phone: "+919876543210",
+      password: "Password123!",
+      displayName: "Alex Rivers",
+    });
+
+    expect(capturedBody?.phone).toBe("+919876543210");
+    expect(result.refreshToken).toBe("refresh-token");
   });
 
   it("throws structured ApiError on server error response", async () => {
@@ -73,7 +103,7 @@ describe("Mobile Centralized API Client", () => {
           status: 200,
           json: async () => ({
             success: true,
-            data: { accessToken: "new-shiny-access-token" },
+            data: { accessToken: "new-shiny-access-token", refreshToken: "rotated-refresh-token" },
           }),
         } as any;
       }
@@ -105,5 +135,6 @@ describe("Mobile Centralized API Client", () => {
     const data = await request<{ secureData: string }>("/protected-resource");
     expect(data.secureData).toBe("success-after-refresh");
     expect(await tokenStorage.getAccessToken()).toBe("new-shiny-access-token");
+    expect(await tokenStorage.getRefreshToken()).toBe("rotated-refresh-token");
   });
 });
