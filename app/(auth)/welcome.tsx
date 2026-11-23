@@ -47,7 +47,7 @@ export default function WelcomeScreen() {
         <View style={styles.footer}>
           <View style={styles.pagination}><View style={styles.activeDot} /><View style={styles.dot} /><View style={styles.dot} /></View>
           <Text style={styles.footerHint}>A community built on sharing knowledge</Text>
-          <Pressable onPress={() => router.push("/(auth)/auth-options")} style={styles.cta} accessibilityRole="button" accessibilityLabel="Get started with SkillBarter">
+          <Pressable onPress={() => router.push("/(auth)/auth-options" as any)} style={styles.cta} accessibilityRole="button" accessibilityLabel="Get started with SkillBarter">
             <Text style={styles.ctaText}>Get Started</Text>
             <ArrowRight color="#061226" size={20} />
           </Pressable>
