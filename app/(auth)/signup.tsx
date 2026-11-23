@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Pre
 import { useRouter } from "expo-router";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, ArrowRight, LockKeyhole, Mail, UserRound } from "lucide-react-native";
+import { ArrowLeft, ArrowRight, LockKeyhole, Mail, Phone, UserRound } from "lucide-react-native";
 import { useAuth } from "@/context/AuthContext";
 import { registerSchema, RegisterFormData } from "@/utils/validators";
 import { Button } from "@/components/common/Button";
@@ -16,13 +16,13 @@ export default function SignupScreen() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const { control, handleSubmit, formState: { isSubmitting, errors } } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { displayName: "", email: "", password: "" },
+    defaultValues: { displayName: "", email: "", phone: "", password: "" },
   });
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
       setErrorMsg(null);
-      const res = await register(data.email, data.password, data.displayName);
+      const res = await register(data.email, data.password, data.displayName, data.phone);
       router.push({
         pathname: "/(auth)/verify-email",
         params: res.verificationToken ? { token: res.verificationToken, email: data.email } : { email: data.email },
@@ -53,6 +53,9 @@ export default function SignupScreen() {
           )} />
           <Controller control={control} name="email" render={({ field: { onChange, onBlur, value } }) => (
             <Input label="Email address" placeholder="you@example.com" keyboardType="email-address" autoCapitalize="none" autoCorrect={false} autoComplete="email" textContentType="emailAddress" leftIcon={<Mail color="#829FC5" size={18} />} onBlur={onBlur} onChangeText={onChange} value={value} error={errors.email?.message} />
+          )} />
+          <Controller control={control} name="phone" render={({ field: { onChange, onBlur, value } }) => (
+            <Input label="Mobile number" placeholder="+919876543210 or 9876543210" keyboardType="phone-pad" autoCapitalize="none" autoCorrect={false} leftIcon={<Phone color="#829FC5" size={18} />} onBlur={onBlur} onChangeText={onChange} value={value} error={errors.phone?.message} helper="Use your 10-digit Indian number or an international number with country code." />
           )} />
           <Controller control={control} name="password" render={({ field: { onChange, onBlur, value } }) => (
             <Input label="Password" placeholder="Create a strong password" secureTextEntry autoComplete="new-password" textContentType="newPassword" leftIcon={<LockKeyhole color="#829FC5" size={18} />} onBlur={onBlur} onChangeText={onChange} value={value} error={errors.password?.message} helper="Use at least 8 characters with uppercase, lowercase and a number." />
