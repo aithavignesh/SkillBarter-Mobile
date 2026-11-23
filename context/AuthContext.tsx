@@ -50,12 +50,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(null);
         setStatus("unauthenticated");
       }
-    } catch {
-      // In case network is offline, check cached user
-      const cached = await tokenStorage.getUser();
-      if (cached) {
-        setUser(cached);
-        setStatus("authenticated");
+    } catch (err: unknown) {
+      const error = err as { code?: string; status?: number };
+      // Keep a cached session only when the server is unreachable. Invalid or
+      // revoked tokens must clear local credentials rather than appear signed in.
+      if (error.code === "NETWORK_ERROR" || error.status === 0) {
+        const cached = await tokenStorage.getUser();
+        if (cached) {
+          setUser(cached);
+          setStatus("authenticated");
+        } else {
+          await tokenStorage.clearAll();
+          setUser(null);
+          setStatus("unauthenticated");
+        }
       } else {
         await tokenStorage.clearAll();
         setUser(null);
