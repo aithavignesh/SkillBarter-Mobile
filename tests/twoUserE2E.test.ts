@@ -542,6 +542,7 @@ describe("Section 9: Complete Two-User Mobile End-to-End Acceptance Journey", ()
     // 1. User A registers
     const regA = await api.auth.register({
       email: "alice@skillbarter.local",
+      phone: "+15550101001",
       password: "AlicePassword123!",
       displayName: "Alice Developer",
     });
@@ -553,6 +554,7 @@ describe("Section 9: Complete Two-User Mobile End-to-End Acceptance Journey", ()
     // 2. User B registers
     const regB = await api.auth.register({
       email: "bob@skillbarter.local",
+      phone: "+15550101002",
       password: "BobPassword123!",
       displayName: "Bob Linguist",
     });
@@ -742,6 +744,7 @@ describe("Section 9: Complete Two-User Mobile End-to-End Acceptance Journey", ()
     it("Rejects non-participant from accessing exchange details", async () => {
       const regC = await api.auth.register({
         email: "charlie@skillbarter.local",
+        phone: "+15550101003",
         password: "CharliePassword123!",
         displayName: "Charlie ThirdParty",
       });
