@@ -8,30 +8,49 @@ export const passwordSchema = z
   .regex(/[a-z]/, "Password must contain at least one lowercase letter")
   .regex(/[0-9]/, "Password must contain at least one number");
 
+export function normalizePhoneNumber(phone: string): string {
+  let cleaned = phone.trim().replace(/[\s()-]/g, "");
+  if (/^\d{10}$/.test(cleaned)) {
+    cleaned = "+91" + cleaned;
+  } else if (/^91\d{10}$/.test(cleaned)) {
+    cleaned = "+" + cleaned;
+  }
+  return cleaned;
+}
+
 export const registerSchema = z.object({
-  email: z.string().email("Invalid email address").toLowerCase().trim(),
-  phone: z.string().trim().min(8, "Mobile number is required").max(16, "Mobile number is too long").regex(/^(?:[6-9]\d{9}|\+[1-9]\d{7,14})$/, "Enter a valid mobile number, e.g. +919876543210"),
-  password: passwordSchema,
   displayName: z.string().min(2, "Name must be at least 2 characters").max(50).trim(),
+  email: z.string().trim().toLowerCase().email("Invalid email address"),
+  phone: z
+    .string()
+    .trim()
+    .min(8, "Mobile number is required")
+    .max(16, "Mobile number is too long")
+    .regex(/^(?:[6-9]\d{9}|\+[1-9]\d{7,14})$/, "Enter a valid mobile number, e.g. +919876543210"),
+  password: passwordSchema,
 });
 
 export type RegisterFormData = z.infer<typeof registerSchema>;
 
 export const loginSchema = z.object({
-  email: z.string().email("Invalid email address").toLowerCase().trim(),
+  email: z.string().trim().toLowerCase().email("Invalid email address"),
   password: z.string().min(1, "Password is required"),
 });
 
 export type LoginFormData = z.infer<typeof loginSchema>;
 
 export const forgotPasswordSchema = z.object({
-  email: z.string().email("Invalid email address").toLowerCase().trim(),
+  email: z.string().trim().toLowerCase().email("Invalid email address"),
 });
+
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
 
 export const resetPasswordSchema = z.object({
   token: z.string().min(1, "Reset token is required"),
   newPassword: passwordSchema,
 });
+
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 
 export const verifyEmailSchema = z.object({
   token: z.string().min(1, "Verification token is required"),

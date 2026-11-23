@@ -24,6 +24,20 @@ export default function LoginScreen() {
       setErrorMsg(null);
       await login(data.email, data.password);
     } catch (err: any) {
+      if (
+        err?.code === "ACCOUNT_CONSOLIDATED" ||
+        /consolidated into primary account/i.test(err?.message || "")
+      ) {
+        const masked =
+          err?.details?.primaryEmailMasked ||
+          err?.message?.match(/\(([^)]+@[^)]+)\)/)?.[1];
+        if (masked) {
+          setErrorMsg(
+            `This account was merged into your primary account (${masked}). Please sign in using your primary account credentials.`
+          );
+          return;
+        }
+      }
       setErrorMsg(err.message || "Failed to sign in. Please verify your credentials.");
     }
   };

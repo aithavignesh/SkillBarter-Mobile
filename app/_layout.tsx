@@ -28,7 +28,7 @@ function NavigationGuard() {
     const inOnboardingGroup = segments[0] === "(onboarding)";
 
     if (status === "unauthenticated") {
-      if (!inAuthGroup) router.replace("/(auth)/welcome");
+      if (!inAuthGroup) router.replace("/(auth)/welcome" as any);
     } else if (status === "authenticated" && user) {
       if (!user.onboardingCompleted) {
         if (!inOnboardingGroup) router.replace("/(onboarding)");

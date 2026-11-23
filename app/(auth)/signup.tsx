@@ -14,7 +14,12 @@ export default function SignupScreen() {
   const router = useRouter();
   const { register } = useAuth();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const { control, handleSubmit, formState: { isSubmitting, errors } } = useForm<RegisterFormData>({
+  const {
+    control,
+    handleSubmit,
+    setError,
+    formState: { isSubmitting, errors },
+  } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     defaultValues: { displayName: "", email: "", phone: "", password: "" },
   });
@@ -28,6 +33,39 @@ export default function SignupScreen() {
         params: res.verificationToken ? { token: res.verificationToken, email: data.email } : { email: data.email },
       });
     } catch (err: any) {
+      // Map server validation details to specific form fields
+      if (err?.details && Array.isArray(err.details)) {
+        let hasMappedField = false;
+        for (const issue of err.details) {
+          if (issue.field && ["displayName", "email", "phone", "password"].includes(issue.field)) {
+            setError(issue.field as keyof RegisterFormData, { message: issue.message });
+            hasMappedField = true;
+          }
+        }
+        if (hasMappedField) return;
+      }
+
+      if (err?.code === "EMAIL_EXISTS" || (err?.message && /email already exists/i.test(err.message))) {
+        setError("email", { message: "An account with this email already exists" });
+        return;
+      }
+
+      if (
+        err?.code === "PHONE_EXISTS" ||
+        (err?.message && /(mobile|phone) number already exists/i.test(err.message))
+      ) {
+        setError("phone", { message: "An account with this mobile number already exists" });
+        return;
+      }
+
+      if (
+        err?.code === "INVALID_PHONE" ||
+        (err?.message && /valid mobile number/i.test(err.message))
+      ) {
+        setError("phone", { message: err.message || "Invalid mobile number format" });
+        return;
+      }
+
       setErrorMsg(err.message || "Failed to create account. Please try again.");
     }
   };
