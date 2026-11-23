@@ -47,7 +47,9 @@
       "typedRoutes": true
     },
     "extra": {
-      "eas": {}
+      "eas": {
+        "projectId": "4df91f19-37b7-421a-9374-5dc72ebe0842"
+      }
     },
     "owner": "vigneshaitha"
   }
