@@ -31,15 +31,31 @@ describe("Mobile Form Validation Schemas", () => {
       const res = registerSchema.safeParse({
         displayName: "Alex Rivers",
         email: "alex@example.com",
+        phone: "+919876543210",
         password: "Password123!",
       });
       expect(res.success).toBe(true);
+    });
+
+    it("rejects a missing or invalid mobile number", () => {
+      expect(registerSchema.safeParse({
+        displayName: "Alex Rivers",
+        email: "alex@example.com",
+        password: "Password123!",
+      }).success).toBe(false);
+      expect(registerSchema.safeParse({
+        displayName: "Alex Rivers",
+        email: "alex@example.com",
+        phone: "123",
+        password: "Password123!",
+      }).success).toBe(false);
     });
 
     it("rejects invalid emails and short names", () => {
       const badEmail = registerSchema.safeParse({
         displayName: "Alex",
         email: "not-an-email",
+        phone: "+919876543210",
         password: "Password123!",
       });
       expect(badEmail.success).toBe(false);
@@ -47,6 +63,7 @@ describe("Mobile Form Validation Schemas", () => {
       const shortName = registerSchema.safeParse({
         displayName: "A",
         email: "alex@example.com",
+        phone: "+919876543210",
         password: "Password123!",
       });
       expect(shortName.success).toBe(false);
