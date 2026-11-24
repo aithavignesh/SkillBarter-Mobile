@@ -65,6 +65,28 @@ describe("Mobile Centralized API Client", () => {
     expect(result.refreshToken).toBe("refresh-token");
   });
 
+  it("sends the stored refresh token to the backend when logging out", async () => {
+    await tokenStorage.setRefreshToken("stored-refresh-token");
+
+    let capturedBody: Record<string, unknown> | undefined;
+    global.fetch = vi.fn().mockImplementation(async (_url: string, options: RequestInit) => {
+      capturedBody = JSON.parse(String(options.body)) as Record<string, unknown>;
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({
+          success: true,
+          data: { message: "Successfully logged out" },
+        }),
+      } as any;
+    });
+
+    const result = await api.auth.logout();
+
+    expect(result.message).toBe("Successfully logged out");
+    expect(capturedBody).toEqual({ refreshToken: "stored-refresh-token" });
+  });
+
   it("throws structured ApiError on server error response", async () => {
     global.fetch = vi.fn().mockImplementation(async () => {
       return {
