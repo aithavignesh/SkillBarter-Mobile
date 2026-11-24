@@ -32,7 +32,13 @@ export const api = {
         method: "POST",
         body: JSON.stringify(input),
       }),
-    logout: () => request<{ message: string }>("/auth/logout", { method: "POST" }),
+    logout: async () => {
+      const refreshToken = await tokenStorage.getRefreshToken();
+      return request<{ message: string }>("/auth/logout", {
+        method: "POST",
+        body: JSON.stringify(refreshToken ? { refreshToken } : {}),
+      });
+    },
     me: () => request<{ user: AuthUser }>("/auth/me"),
     verifyEmail: (token: string) =>
       request<{ user: AuthUser; message: string }>("/auth/verify-email", {
